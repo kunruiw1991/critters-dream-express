@@ -7,7 +7,7 @@ A little railway puzzle made for touch screens and young builders.
 ## How to play
 
 1. Choose a straight or curved track, then tap an empty square. You can also drag tracks onto the board.
-2. Tap a placed track to rotate it. Rotate the selected toolbox track with the rotate button or R.
+2. Tap a placed track to rotate it. Select **Eraser**, then tap a placed track to remove it; **Undo** restores it. Fixed tracks and scenery are protected. Rotate the selected toolbox track with the rotate button or R.
 3. A connected route starts the train automatically. Press **Let’s ride!** at any time to test an unfinished route.
 4. Pick up every waiting friend and reach the picnic to complete the puzzle.
 
