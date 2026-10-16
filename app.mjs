@@ -1,4 +1,4 @@
-import {levels,key,solution,initial,trace,DIRS,journeySegments,sampleSegment} from './engine.mjs?v=4';
+import {levels,key,solution,initial,trace,DIRS,journeySegments,sampleSegment} from './engine.mjs?v=5';
 const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg';let stage=0,board={},history=[],type='straight',rotation=0,running=false,token=0,audio=null,sound=false,completed=[],autoRideTimer=null;try{completed=JSON.parse(localStorage.getItem('dream-express-complete')||'[]')}catch{}
 const CRITTERS={bat:{name:'LunaBat',file:'lunabat'},fox:{name:'SunnyFox',file:'sunnyfox'},skunk:{name:'PoppyDash',file:'poppydash'}};
 const face=who=>{const c=CRITTERS[who];return `<svg width="100" height="100" viewBox="0 0 100 100" role="img" aria-label="${c.name}"><circle cx="50" cy="50" r="48" fill="#fff7df"/><image href="icons/${c.file}.jpg" x="7" y="7" width="86" height="86" preserveAspectRatio="xMidYMid meet"/><circle cx="50" cy="50" r="47" fill="none" stroke="#e7bf78" stroke-width="4"/></svg>`};
@@ -11,7 +11,7 @@ for(let y=0;y<5;y++)for(let x=0;x<6;x++){let k=key([x,y]),isFixed=!!fixed[k],roc
 if(friend)html+=`<g transform="translate(19 -9)"><path d="M13 88H73" stroke="#b78c54" stroke-width="9" stroke-linecap="round"/><rect x="10" y="81" width="68" height="7" rx="3" fill="#ead09c"/><g class="passenger-waiting" transform="translate(11 9) scale(.65)">${face(friend)}</g><circle cx="70" cy="24" r="11" fill="#fff9e9"/><text x="70" y="28" font-size="13" text-anchor="middle">♥</text></g>`;
 if(start)html+=`<g transform="translate(18 11)"><path d="M0 17L20 0 40 17Z" fill="#b58864"/><rect x="5" y="17" width="30" height="30" rx="3" fill="#f1ddb0"/><rect x="14" y="25" width="12" height="22" rx="6" fill="#607f70"/></g>`;
 if(end)html+=`<g transform="translate(30 14)"><rect x="4" y="53" width="63" height="35" rx="5" fill="#f5e6bf"/><path d="M4 62H67M4 78H67M18 53V88M46 53V88" stroke="#d8947e" stroke-width="6"/><path d="M33 56V18" stroke="#8d7a5e" stroke-width="4"/><path d="M33 18L63 27 33 37Z" fill="#d59168"/><text x="15" y="59" font-size="28">🧺</text></g>`;html+='</g>'}
-html+=`<g id="train" pointer-events="none" transform="translate(60 ${l.path[0][1]*120+60})"><g id="engine"><ellipse cy="23" rx="40" ry="11" fill="#284c4a22"/><rect x="-36" y="-21" width="65" height="44" rx="14" fill="#dba351" stroke="#fff1cb" stroke-width="3"/><rect x="-34" y="-25" width="27" height="43" rx="8" fill="#315e5b"/><rect x="-28" y="-18" width="16" height="23" rx="4" fill="#b2d9cd"/><rect x="11" y="-30" width="11" height="19" rx="3" fill="#526e62"/><path d="M24 3H39V17H24" fill="#e7bd70"/><circle cx="-22" cy="21" r="10" fill="#36544f" stroke="#f2d49a" stroke-width="4"/><circle cx="17" cy="21" r="10" fill="#36544f" stroke="#f2d49a" stroke-width="4"/><circle cx="15" cy="-1" r="8" fill="#fff0bd"/><path d="M12-4L18 2M18-4L12 2" stroke="#d6a45b" stroke-width="2"/></g><g id="aboard"></g></g>`;$('board').innerHTML=html;
+html+=`<g id="train" pointer-events="none" transform="translate(60 ${l.path[0][1]*120+60})"><g id="engine"><ellipse cy="23" rx="40" ry="11" fill="#284c4a22"/><rect x="-36" y="-21" width="65" height="44" rx="14" fill="#dba351" stroke="#fff1cb" stroke-width="3"/><rect x="-34" y="-25" width="27" height="43" rx="8" fill="#315e5b"/><rect x="-28" y="-18" width="16" height="23" rx="4" fill="#b2d9cd"/><rect x="11" y="-30" width="11" height="19" rx="3" fill="#526e62"/><path d="M24 3H39V17H24" fill="#e7bd70"/><circle cx="-22" cy="21" r="10" fill="#36544f" stroke="#f2d49a" stroke-width="4"/><circle cx="17" cy="21" r="10" fill="#36544f" stroke="#f2d49a" stroke-width="4"/><circle cx="15" cy="-1" r="8" fill="#fff0bd"/><path d="M12-4L18 2M18-4L12 2" stroke="#d6a45b" stroke-width="2"/></g><g id="aboard"></g></g><g id="pickup-effects" pointer-events="none"></g>`;$('board').innerHTML=html;
 $('chapter').textContent=`JOURNEY 0${stage+1} / 03`;$('level-name').textContent=l.name;$('mission').textContent=l.subtitle;$('levels').innerHTML=levels.map((_,i)=>`<button data-level="${i}" class="${i===stage?'active':''} ${completed.includes(i)?'done':''}" aria-label="Puzzle ${i+1}" aria-current="${i===stage?'step':'false'}">${completed.includes(i)?'✓':i+1}</button>`).join('');$('passengers').innerHTML='<span>OUR PASSENGERS</span>'+Object.values(l.friends).map(face).join('');}
 function status(t){$('status').textContent=t}function saveMove(){clearTimeout(autoRideTimer);history.push(structuredClone(board))}function place(k){if(running)return;const l=levels[stage];if(initial(l)[k]||l.rocks.some(p=>key(p)===k)){if(type==='erase')status('This part belongs to the landscape. Erase tracks you placed.');return;}if(type==='erase'){if(!board[k]){status('Nothing to erase here. Tap a track you placed.');return;}saveMove();delete board[k];render();beep(330,.06);status('Track erased. Undo can bring it back.');return;}saveMove();if(board[k])board[k]=board[k].map(d=>(d+1)%4);else board[k]=selected();render();beep(450,.045);status('Looking good! Press ▶ to try your railway.');checkSolved();}
 function reset(i=stage){clearTimeout(autoRideTimer);token++;running=false;stage=i;board=initial(levels[i]);history=[];$('celebration').hidden=true;$('play').innerHTML='▶ <span>Let’s ride!</span>';render();choices();status(`${levels[i].missing.length} little gaps. One happy journey.`)}
@@ -28,6 +28,37 @@ function celebrate(){
  $('levels').querySelector(`[data-level="${stage}"]`).classList.add('done');
  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.25),i*130));
 }
+function boardingSound(who){
+ if(who!=='skunk'){beep(who==='bat'?880:660,.16);return;}
+ if(!sound)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type='sawtooth';o.frequency.setValueAtTime(145,audio.currentTime);o.frequency.exponentialRampToValueAtTime(42,audio.currentTime+.24);g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.26);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.27);}catch{}
+}
+function beginBoarding(who,tile,pos,slot){
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,source={x:tile[0]*120+62.5,y:tile[1]*120+32.5},target={x:pos.x-11+slot*36,y:pos.y-46};
+ const messages={bat:'LunaBat flaps her wings and flies aboard!',fox:'SunnyFox crouches… and jumps onto the train!',skunk:'Pfft! PoppyDash fart-boosts onto the train!'};
+ status(messages[who]);boardingSound(who);$('board').dataset.boarding=who;
+ const wings=who==='bat'?`<path id="wing-left" d="M-31 0Q-66-63-98-29L-85-4Q-70-17-62 7Q-48-5-31 20Z" fill="#a88cdb" stroke="#61448d" stroke-width="3"/><path id="wing-right" d="M31 0Q66-63 98-29L85-4Q70-17 62 7Q48-5 31 20Z" fill="#a88cdb" stroke="#61448d" stroke-width="3"/>`:'';
+ $('pickup-effects').innerHTML=`<g id="boarding-clouds"></g><g id="boarding-actor" data-kind="${who}">${wings}<g transform="translate(-50 -50)">${face(who)}</g></g><g id="boarding-sparkles"></g>`;
+ const waiting=$('board').querySelector(`[data-cell="${key(tile)}"] .passenger-waiting`);if(waiting)waiting.style.opacity='0';
+ return {who,source,target,elapsed:0,duration:reduced?650:who==='skunk'?1900:who==='bat'?1800:1500,reduced};
+}
+function drawBoarding(b,dt){
+ b.elapsed+=dt;const t=Math.min(1,b.elapsed/b.duration),wait=b.who==='fox'?.2:b.who==='skunk'?.28:0,flight=Math.max(0,(t-wait)/(1-wait));
+ const ease=b.who==='skunk'?flight*flight:flight*flight*(3-2*flight),arc=Math.sin(flight*Math.PI)*(b.reduced?18:b.who==='bat'?132:b.who==='fox'?95:105);
+ let x=b.source.x+(b.target.x-b.source.x)*ease,y=b.source.y+(b.target.y-b.source.y)*ease-arc;
+ let size=.65+Math.sin(flight*Math.PI)*.13-(.65-.38)*ease,tilt=b.reduced?0:b.who==='bat'?Math.sin(flight*Math.PI*4)*9:b.who==='fox'?Math.sin(flight*Math.PI)*-18:Math.sin(flight*Math.PI)*22;
+ let sx=1,sy=1;if(t<wait){const crouch=Math.sin(t/wait*Math.PI);sx=1+.18*crouch;sy=1-.25*crouch;if(b.who==='skunk'&&!b.reduced)x+=Math.sin(t*70)*3;}
+ if(flight>.87){const bounce=Math.sin((flight-.87)/.13*Math.PI)*.12;sx=1+bounce;sy=1-bounce;}
+ $('boarding-actor').setAttribute('transform',`translate(${x} ${y}) rotate(${tilt}) scale(${size*sx} ${size*sy})`);
+ if(b.who==='bat'){const flap=b.reduced?1:.5+.5*Math.abs(Math.cos(t*Math.PI*7));$('wing-left').setAttribute('transform',`scale(1 ${flap})`);$('wing-right').setAttribute('transform',`scale(1 ${flap})`);}
+ let clouds='';if(b.who==='skunk'&&t>.16){
+  for(let i=0;i<9;i++){const age=t-.17-i*.055;if(age<0||age>.7)continue;const grow=age/.7,cx=b.source.x-20-i*4-grow*52,cy=b.source.y+25+Math.sin(i*2)*13-grow*14;clouds+=`<circle cx="${cx}" cy="${cy}" r="${7+grow*20}" fill="${i%2?'#c8df9b':'#e5eab2'}" opacity="${(1-grow)*.8}"/>`;}
+  if(t<.6)clouds+=`<text x="${b.source.x-58}" y="${b.source.y-35}" fill="#637349" font-size="20" font-weight="700" transform="rotate(-12 ${b.source.x-58} ${b.source.y-35})">pfft!</text>`;
+  if(flight>0&&flight<.85)clouds+=`<path d="M${x-40},${y+25}l-27,15 M${x-35},${y+39}l-21,12" stroke="#f2d17a" stroke-width="5" stroke-linecap="round"/>`;
+ }
+ $('boarding-clouds').innerHTML=clouds;
+ $('boarding-sparkles').innerHTML=b.who==='bat'&&flight>0&&flight<.9?Array.from({length:4},(_,i)=>`<text x="${x-35-i*15}" y="${y+25+Math.sin(i+t*8)*12}" font-size="${13-i}" fill="#fff0aa" opacity="${.8-i*.15}">✦</text>`).join(''):'';
+ return t===1;
+}
 async function ride(){
  clearTimeout(autoRideTimer);
  if(running){token++;running=false;render();setPlay(false);status('Ready to build. Your tracks are still here.');return;}
@@ -35,23 +66,21 @@ async function ride(){
  setPlay(true);status('Choo choo! Your friends are on their way.');
  $('board').dataset.ride='running';$('board').dataset.arrived='false';
  $('board').closest('.game-panel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
- let elapsed=0,last=null,current=-1,aboard=[];const speed=150,total=segments.reduce((sum,s)=>sum+s.length,0);
+ let elapsed=0,last=null,current=-1,aboard=[],boarding=null;const speed=150,total=segments.reduce((sum,s)=>sum+s.length,0);
  await new Promise(resolve=>{
   function frame(now){
    if(id!==token){resolve();return;}
    // A hidden tab pauses naturally. Returning never cancels the journey.
-   if(last!==null&&!document.hidden)elapsed+=Math.min(now-last,100);last=now;
+   const dt=last!==null&&!document.hidden?Math.min(now-last,100):0;last=now;
+   if(boarding){if(drawBoarding(boarding,dt)){const who=boarding.who;$('pickup-effects').innerHTML='';$('board').dataset.boarding='';$('aboard').innerHTML=aboard.map((f,i)=>`<g transform="translate(${-30+i*36} -65) scale(.38)">${face(f)}</g>`).join('');const passenger=$('passengers').querySelector(`[aria-label="${CRITTERS[who].name}"]`);if(passenger)passenger.style.opacity='1';status(`${CRITTERS[who].name} is aboard! Next stop: the picnic.`);beep(740,.18);boarding=null;}requestAnimationFrame(frame);return;}
+   elapsed+=dt;
    let distance=Math.min(total,elapsed/1000*speed),index=0;
    while(index<segments.length-1&&distance>segments[index].length){distance-=segments[index].length;index++;}
    const segment=segments[index],t=Math.min(1,distance/Math.max(1,segment.length)),pos=sampleSegment(segment,t),train=$('train');
    train.setAttribute('transform',`translate(${pos.x} ${pos.y})`);$('engine').setAttribute('transform',`rotate(${pos.angle})`);
    if(index!==current){current=index;beep(220+index*25,.06);}
    if(segment.friend&&t>=.45&&!aboard.includes(segment.friend)){
-    const who=segment.friend;aboard.push(who);
-    const waiting=$('board').querySelector(`[data-cell="${key(segment.tile)}"] .passenger-waiting`);if(waiting)waiting.style.opacity='0';
-    $('aboard').innerHTML=aboard.map((f,i)=>`<g transform="translate(${-30+i*36} -65) scale(.38)">${face(f)}</g>`).join('');
-    const passenger=$('passengers').querySelector(`[aria-label="${CRITTERS[who].name}"]`);if(passenger)passenger.style.opacity='1';
-    status(`${CRITTERS[who].name} hops aboard! Next stop: the picnic.`);beep(740,.18);
+    const who=segment.friend;aboard.push(who);boarding=beginBoarding(who,segment.tile,pos,aboard.length-1);drawBoarding(boarding,0);requestAnimationFrame(frame);return;
    }
    if(elapsed/1000*speed>=total){resolve();return;}requestAnimationFrame(frame);
   }requestAnimationFrame(frame);

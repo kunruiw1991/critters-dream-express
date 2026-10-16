@@ -2,7 +2,7 @@ export const DIRS=[[0,-1],[1,0],[0,1],[-1,0]];
 export const levels=[
  {name:'A little moonlit ride',subtitle:'Pick up LunaBat and take her to the picnic.',path:[[0,2],[1,2],[2,2],[2,1],[3,1],[4,1],[4,2],[5,2]],missing:[1,2,5],friends:{3:'bat'},rocks:[[0,0],[5,0],[0,4],[4,4]]},
  {name:'A lantern for the journey',subtitle:'LunaBat and SunnyFox are waiting for a lift.',path:[[0,3],[1,3],[1,2],[1,1],[2,1],[3,1],[3,2],[3,3],[4,3],[5,3]],missing:[1,3,4,6,8],friends:{2:'bat',7:'fox'},rocks:[[0,0],[4,0],[5,1],[2,4]]},
- {name:'Everyone to the picnic!',subtitle:'Bring SunnyFox and PoppyDash to the moonlit picnic.',path:[[0,2],[1,2],[1,3],[2,3],[3,3],[3,2],[3,1],[4,1],[4,2],[5,2]],missing:[1,3,4,5,7,8],friends:{2:'fox',6:'skunk'},rocks:[[0,0],[2,1],[5,0],[4,4]]}
+ {name:'Everyone to the picnic!',subtitle:'Bring LunaBat, SunnyFox, and PoppyDash to the moonlit picnic.',path:[[0,2],[1,2],[1,3],[2,3],[3,3],[3,2],[3,1],[4,1],[4,2],[5,2]],missing:[1,3,4,7,8],friends:{2:'fox',5:'bat',6:'skunk'},rocks:[[0,0],[2,1],[5,0],[4,4]]}
 ];
 export const key=([x,y])=>`${x},${y}`;
 export function direction(a,b){return DIRS.findIndex(d=>a[0]+d[0]===b[0]&&a[1]+d[1]===b[1]);}

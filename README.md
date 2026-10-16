@@ -11,7 +11,7 @@ A little railway puzzle made for touch screens and young builders.
 3. A connected route starts the train automatically. Press **Let’s ride!** at any time to test an unfinished route.
 4. Pick up every waiting friend and reach the picnic to complete the puzzle.
 
-Three puzzles feature LunaBat, SunnyFox, and PoppyDash. No timer or penalties; hints, undo, reset, optional synthesized sounds, and browser-local completion badges are included.
+Three puzzles feature LunaBat, SunnyFox, and PoppyDash. The train pauses for each pickup: LunaBat flaps her wings and flies aboard, SunnyFox crouches and jumps in, and PoppyDash fart-boosts aboard with a cartoon puff cloud. Boarding animations pause with the tab and stop cleanly on reset. No timer or penalties; hints, undo, reset, optional synthesized sounds, and browser-local completion badges are included.
 
 ## Run
 
