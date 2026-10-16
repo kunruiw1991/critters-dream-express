@@ -1,0 +1,8 @@
+{
+ "source_repository":"https://github.com/kunruiw1991/critters-quest-rpg",
+ "assets":[
+  {"file":"lunabat.jpg","source_path":"icons/lunabat.jpg","sha":"78127fa018fa4d4294ed132ab5377103e26acc3d"},
+  {"file":"sunnyfox.jpg","source_path":"icons/sunnyfox.jpg","sha":"09de1361dafcad846ed2d1c027e30e120487001c"},
+  {"file":"poppydash.jpg","source_path":"icons/poppydash.jpg","sha":"09cdda12bdb97d661682e756e5d617dd56ccd28c"}
+ ]
+}

@@ -15,3 +15,25 @@ export function trace(l,board){let p=l.path[0],incoming=3,route=[p],seen=new Set
  if(k===key(l.path.at(-1)))return {route,picked,win:picked.length===Object.keys(l.friends).length,reason:'friends'};
  const out=piece.find(d=>d!==incoming),d=DIRS[out];p=[p[0]+d[0],p[1]+d[1]];if(p[0]<0||p[0]>5||p[1]<0||p[1]>4)return {route,picked,win:false,reason:'edge'};route.push(p);incoming=(out+2)%4;
  }return {route,picked,win:false,reason:'loop'};}
+
+
+// Follow the same quadratic curves that are drawn on each track tile.
+export function journeySegments(l,board,route){
+ const edge=[[60,0],[120,60],[60,120],[0,60]],segments=[];
+ for(let i=0;i<route.length;i++){
+  const tile=route[i],incoming=i===0?3:direction(tile,route[i-1]),piece=board[key(tile)];
+  const valid=piece?.includes(incoming),out=valid?piece.find(d=>d!==incoming):null;
+  const start=i===0?[60,60]:edge[incoming],end=i===route.length-1||!valid?[60,60]:edge[out];
+  const curved=i>0&&i<route.length-1&&valid&&incoming%2!==out%2;
+  const points=[start,curved?[60,60]:[(start[0]+end[0])/2,(start[1]+end[1])/2],end].map(p=>[p[0]+tile[0]*120,p[1]+tile[1]*120]);
+  let length=0,previous=points[0];for(let n=1;n<=20;n++){const pos=sampleSegment({points},n/20);length+=Math.hypot(pos.x-previous[0],pos.y-previous[1]);previous=[pos.x,pos.y];}
+  segments.push({points,length,tile,friend:l.friends[l.path.findIndex(p=>key(p)===key(tile))]||null});
+  if(!valid)break;
+ }return segments;
+}
+export function sampleSegment(segment,t){
+ const [a,c,b]=segment.points,u=1-t;
+ const x=u*u*a[0]+2*u*t*c[0]+t*t*b[0],y=u*u*a[1]+2*u*t*c[1]+t*t*b[1];
+ const dx=2*u*(c[0]-a[0])+2*t*(b[0]-c[0]),dy=2*u*(c[1]-a[1])+2*t*(b[1]-c[1]);
+ return {x,y,angle:Math.atan2(dy,dx)*180/Math.PI};
+}
